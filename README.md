@@ -157,13 +157,3 @@ copy-trader/
 > - Never risk money you cannot afford to lose.
 
 ---
-
-## 📄 License
-
-MIT License — see [LICENSE](LICENSE) for details.
-
-## Collaborations
-
-If this project was useful to you, contributions are welcome via USDC on Polygon:
-
-**`0xbc48eAebC98463c7c9521e1310C13FC1A080B419`**
