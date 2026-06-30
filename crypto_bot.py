@@ -336,7 +336,7 @@ def execute_buy(token_id: str, amount_usdc: float, price: float,
         )
         client.set_api_creds(client.create_or_derive_api_key())
 
-        taker_price = min(round(price + 0.01, 4), 0.999)
+        taker_price = min(round(price + 0.01, 4), 0.99)
         size        = round(amount_usdc / price, 2)
 
         # CLOB v2 minimum is 5 shares per order
