@@ -323,9 +323,9 @@ def get_clob_price(token_id: str) -> float:
         return 0.0
 
 def execute_buy(token_id: str, amount_usdc: float, price: float,
-                private_key: str, proxy_wallet: str, signature_type: int = 2) -> bool:
+                private_key: str, proxy_wallet: str, signature_type: int = 3) -> bool:
     try:
-        from py_clob_client_v2 import ClobClient, OrderArgsV2, Side
+        from py_clob_client_v2 import ClobClient, OrderArgsV2, Side, AssetType, BalanceAllowanceParams
 
         client = ClobClient(
             host=CLOB_API,
@@ -335,6 +335,13 @@ def execute_buy(token_id: str, amount_usdc: float, price: float,
             funder=proxy_wallet,
         )
         client.set_api_creds(client.create_or_derive_api_key())
+
+        # Required for deposit wallet (POLY_1271) orders — syncs the CLOB's
+        # cached balance/allowance view with the deposit wallet's on-chain state.
+        client.update_balance_allowance(BalanceAllowanceParams(
+            asset_type=AssetType.COLLATERAL,
+            signature_type=signature_type,
+        ))
 
         taker_price = min(round(price + 0.01, 4), 0.99)
         size        = round(amount_usdc / price, 2)
@@ -374,7 +381,7 @@ class CryptoBot:
         self.trades       = []
         self.private_key  = os.getenv("POLY_PRIVATE_KEY", "")
         self.proxy_wallet = os.getenv("POLY_PROXY_WALLET", "")
-        self.signature_type = int(os.getenv("POLY_SIGNATURE_TYPE", "2"))
+        self.signature_type = int(os.getenv("POLY_SIGNATURE_TYPE", "3"))
 
         if not paper and not dry_run and (not self.private_key or not self.proxy_wallet):
             raise ValueError("POLY_PRIVATE_KEY and POLY_PROXY_WALLET required in .env")
